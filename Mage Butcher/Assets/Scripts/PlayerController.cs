@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour
         playerInputs.Player.Look.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
         playerInputs.Player.Look.canceled += ctx => lookInput = Vector2.zero;
 
-        playerInputs.Player.Jump.performed += ctx => didJump = true;
+        playerInputs.Player.Jump.performed += ctx => OnJump();
     }
 
     private void OnEnable() => playerInputs.Enable();
@@ -72,11 +72,7 @@ public class PlayerController : MonoBehaviour
         playerController.Move(move * moveSpeed * Time.deltaTime);
 
         // Adding a velocity to the player upwards if they did the jump input
-        if(didJump && playerController.isGrounded)
-        {
-            velocity.y = jumpHeight;
-            didJump = false;
-        }
+        playerController.Move(velocity * Time.deltaTime);
     }
 
     /// <summary>
@@ -98,20 +94,37 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
-    /// Handles the gravity on the player based on 
+    /// Handles the gravity on the player based on if they have jumped or not
     /// </summary>
     private void HandleGravity()
     {
         // If the player is not on the ground apply gravity to the player
-        if (!playerController.isGrounded)
+        if(playerController.isGrounded)
+        {
+            if(didJump)
+            {
+                velocity.y = jumpHeight;
+                didJump = false;
+            }
+            else if(velocity.y < 0)
+            {
+                velocity.y = -2f;
+            }
+        }
+        else
         {
             velocity.y += gravity * Time.deltaTime;
         }
-        else if (velocity.y < 0)
-        {
-            velocity.y = -2f;
-        }
+    }
 
-        playerController.Move(velocity * Time.deltaTime);
+    /// <summary>
+    /// Handles the logic of jumping when the jump button is pressed
+    /// </summary>
+    private void OnJump()
+    {
+        if(playerController.isGrounded)
+        {
+            didJump = true;
+        }
     }
 }
