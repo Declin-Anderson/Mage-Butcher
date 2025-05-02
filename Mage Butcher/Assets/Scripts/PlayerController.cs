@@ -20,13 +20,20 @@ public class PlayerController : MonoBehaviour
     // reference to the camera position 
     public Transform cameraPosition;
 
+    // The input of movement that the player has
     private Vector2 movementInput;
+    // The Input of looking around that the player has
     private Vector2 lookInput;
+    // If the player did jump
     private bool didJump;
+    // The velocity that the player has
     private Vector3 velocity;
+    // The gravity affecting the player
     private float gravity = -9.8f;
+    // The yRotation of the player to prevent wrongful rotation
     private float yRotation = 0f;
 
+    // Reference to the Input action map script
     private PlayerControls playerInputs;
 
     private void Awake()
@@ -41,14 +48,26 @@ public class PlayerController : MonoBehaviour
         playerInputs.Player.Look.performed += ctx => lookInput = ctx.ReadValue<Vector2>();
         playerInputs.Player.Look.canceled += ctx => lookInput = Vector2.zero;
 
+        // Reads the jump input for the player
         playerInputs.Player.Jump.performed += ctx => OnJump();
     }
 
+    /// <summary>
+    /// When the object is enable it turns on the player inputs
+    /// </summary>
     private void OnEnable() => playerInputs.Enable();
+    
+    /// <summary>
+    /// When the object is disabled it turns off the player inputs
+    /// </summary>
     private void OnDisable() => playerInputs.Disable();
 
+    /// <summary>
+    /// When the object is initial started
+    /// </summary>
     private void Start()
     {
+        // Lock the cursor to the screen and make it invisible
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }

@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Doorway
+  - Wall
   layers:
   - Default
   - TransparentFX
